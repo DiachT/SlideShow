@@ -17,6 +17,7 @@ import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FilenameFilter;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -27,8 +28,11 @@ import butterknife.OnClick;
  * @author Tetiana Diachuk (diacht@gmail.com)
  */
 public class MainActivity extends AppCompatActivity {
+    private static final int SECOND = 1000;
     @InjectView(R.id.image_first)
     protected ImageView mImageFirst;
+    @InjectView(R.id.image_second)
+    protected ImageView mImageSecond;
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -128,31 +132,54 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setImage();
+        beginSlideShow();
     }
 
-    private void setImage(){
-        if(mSettings.getFolder() != null){
+    private void beginSlideShow() {
+        if (mSettings.getFolder() != null) {
             File parentDir = new File(mSettings.getFolder());
             if (parentDir.isDirectory()) {
-                File[] files = parentDir.listFiles();
-                for(File file : files){
-                    if(file.getName().toLowerCase().endsWith(".jpg")){
-                        Picasso.with(this).load(file).
-                                memoryPolicy(MemoryPolicy.NO_CACHE).
-                                fit().centerInside().
-                                into(mImageFirst);
-                        break;
+                FilenameFilter imageFilter = new FilenameFilter() {
+                    public boolean accept(File file, String name) {
+                        if (name.toLowerCase().endsWith(".jpg")) {
+                            // filters files whose extension is .jpg
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
+                };
+                File[] files = parentDir.listFiles(imageFilter);
+                if(files.length > 0) {
+                    showImage(loadImageIntoView(mImageFirst, files, 0), files, true);
                 }
             }
         }
     }
 
+    private int loadImageIntoView(ImageView view, File[] files, int i){
+        Picasso.with(this).load(files[i]).memoryPolicy(MemoryPolicy.NO_CACHE).
+                fit().centerInside().into(view);
+        if((++ i) >= files.length) i = 0;
+        return i;
+    }
+
+    private void showImage(int i, final File[] files, final boolean isFirstVisible){
+        final int temp = loadImageIntoView(isFirstVisible ? mImageSecond : mImageFirst, files, i);
+        (isFirstVisible ? mImageFirst : mImageSecond).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mImageFirst != null) {
+                    mImageFirst.setVisibility(isFirstVisible ? View.INVISIBLE : View.VISIBLE);
+                    showImage(temp, files, !isFirstVisible);
+                }
+            }
+        }, SECOND * 2);
+    }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
