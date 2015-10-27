@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -166,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showImage(int i, final File[] files, final boolean isFirstVisible){
         final int temp = loadImageIntoView(isFirstVisible ? mImageSecond : mImageFirst, files, i);
-        (isFirstVisible ? mImageFirst : mImageSecond).postDelayed(new Runnable() {
+        mImageFirst.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (mImageFirst != null) {
@@ -174,7 +175,8 @@ public class MainActivity extends AppCompatActivity {
                     showImage(temp, files, !isFirstVisible);
                 }
             }
-        }, SECOND * 2);
+        }, SECOND * Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).
+                getString(getString(R.string.update_interval), "5")));
     }
 
     @Override

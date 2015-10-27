@@ -22,11 +22,13 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark"
         android:id="@+id/image_second"/>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorAccent"
         android:id="@+id/image_first"/>
 
     <!-- This FrameLayout insets its children based on system windows using
