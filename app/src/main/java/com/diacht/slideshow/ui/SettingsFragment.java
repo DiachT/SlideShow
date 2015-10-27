@@ -27,6 +27,15 @@ public class SettingsFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_settings);
+        findPreference(getString(R.string.select_folder)).setSummary(
+                getPreferenceScreen().getSharedPreferences().
+                        getString(getString(R.string.select_folder), null));
+        findPreference(getString(R.string.time_start)).setSummary(
+                getPreferenceScreen().getSharedPreferences().
+                        getString(getString(R.string.time_start), null));
+        findPreference(getString(R.string.time_stop)).setSummary(
+                getPreferenceScreen().getSharedPreferences().
+                        getString(getString(R.string.time_stop), null));
         findPreference(getString(R.string.select_folder)).
                 setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
@@ -59,7 +68,10 @@ public class SettingsFragment extends PreferenceFragment {
         // You could specify a String like "/storage/emulated/0/", but that can
         // dangerous. Always use Android's API calls to get paths to the SD-card or
         // internal memory.
-        i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
+        i.putExtra(FilePickerActivity.EXTRA_START_PATH,
+                getPreferenceScreen().getSharedPreferences().
+                        getString(getString(R.string.select_folder),
+                                Environment.getExternalStorageDirectory().getPath()));
         startActivityForResult(i, FILE_CODE);
     }
 
@@ -68,6 +80,7 @@ public class SettingsFragment extends PreferenceFragment {
         if (requestCode == FILE_CODE && resultCode == Activity.RESULT_OK) {
             getPreferenceScreen().getSharedPreferences().edit().putString(
                     getString(R.string.select_folder), data.getData().getPath()).apply();
+            findPreference(getString(R.string.select_folder)).setSummary(data.getData().getPath());
         }
     }
 

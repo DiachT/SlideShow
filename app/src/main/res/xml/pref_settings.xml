@@ -4,7 +4,7 @@
 
     <com.diacht.slideshow.system.TimePreference
         android:key="@string/time_start"
-        android:title="@string/time_start"/>
+        android:title="@string/time_start" />
 
     <com.diacht.slideshow.system.TimePreference
         android:key="@string/time_stop"
@@ -13,6 +13,7 @@
     <ListPreference android:title="@string/update_interval"
         android:key="@string/update_interval"
         android:defaultValue="5"
+        android:summary="%s"
         android:entries="@array/interval"
         android:entryValues="@array/interval"/>
 
