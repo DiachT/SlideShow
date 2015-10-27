@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
                 File[] files = parentDir.listFiles(imageFilter);
-                if(files.length > 0) {
+                if(files != null && files.length > 0) {
                     mImageFirst.setVisibility(View.VISIBLE);
                     mImageSecond.setVisibility(View.VISIBLE);
                     showImage(loadImageIntoView(mImageFirst, files, 0), files, true);
