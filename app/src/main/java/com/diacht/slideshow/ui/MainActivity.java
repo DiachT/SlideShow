@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -31,7 +32,6 @@ import butterknife.OnClick;
  * @author Tetiana Diachuk (diacht@gmail.com)
  */
 public class MainActivity extends AppCompatActivity {
-    private static final int SECOND = 1000;
     @InjectView(R.id.image_first)
     protected ImageView mImageFirst;
     @InjectView(R.id.image_second)
@@ -115,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
 
-
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,8 +154,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals(Utils.ACTION_STOP)){
                 finish();
-            }else
-            if (PreferenceManager.getDefaultSharedPreferences(MainActivity.this).
+            } else if (PreferenceManager.getDefaultSharedPreferences(MainActivity.this).
                     getBoolean(getString(R.string.start_power), true)) {
                 finish();
             }
@@ -164,10 +162,10 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void beginSlideShow() {
-        if (PreferenceManager.getDefaultSharedPreferences(MainActivity.this).
-                getString(getString(R.string.select_folder), null) != null) {
-            File parentDir = new File(PreferenceManager.getDefaultSharedPreferences(MainActivity.this).
-                    getString(getString(R.string.select_folder), ""));
+        String folder = PreferenceManager.getDefaultSharedPreferences(MainActivity.this).
+                getString(getString(R.string.select_folder), null);
+        if (folder != null) {
+            File parentDir = new File(folder);
             if (parentDir.isDirectory()) {
                 FilenameFilter imageFilter = new FilenameFilter() {
                     public boolean accept(File file, String name) {
@@ -180,22 +178,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
                 File[] files = parentDir.listFiles(imageFilter);
-                if(files != null && files.length > 0) {
+                if (files != null && files.length > 0) {
                     mImageFirst.setVisibility(View.VISIBLE);
                     mImageSecond.setVisibility(View.VISIBLE);
                     showImage(loadImageIntoView(mImageFirst, files, 0), files, true);
-                }else{
-                    goneImages();
+                    return;
                 }
-            }else {
-                goneImages();
             }
-        }else{
-            goneImages();
         }
-    }
-
-    private void goneImages(){
         mImageFirst.setVisibility(View.GONE);
         mImageSecond.setVisibility(View.GONE);
     }
@@ -208,17 +198,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showImage(int i, final File[] files, final boolean isFirstVisible){
-        final int temp = loadImageIntoView(isFirstVisible ? mImageSecond : mImageFirst, files, i);
+        final int nextPhotoId = loadImageIntoView(isFirstVisible ? mImageSecond : mImageFirst, files, i);
         mImageFirst.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (mImageFirst != null) {
                     mImageFirst.setVisibility(isFirstVisible ? View.INVISIBLE : View.VISIBLE);
-                    showImage(temp, files, !isFirstVisible);
+                    showImage(nextPhotoId, files, !isFirstVisible);
                 }
             }
-        }, SECOND * Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).
-                getString(getString(R.string.update_interval), "5")));
+        }, TimeUnit.SECONDS.toMillis(Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).
+                getString(getString(R.string.update_interval), "5"))));
     }
 
     @Override

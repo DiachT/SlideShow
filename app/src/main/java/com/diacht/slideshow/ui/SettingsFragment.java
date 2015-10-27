@@ -16,7 +16,7 @@ import com.nononsenseapps.filepicker.FilePickerActivity;
  * @author Tetiana Diachuk (diacht@gmail.com)
  */
 public class SettingsFragment extends PreferenceFragment {
-    private static final int FILE_CODE = 24352;
+    private static final int REQUEST_FILE_CODE = 24352;
 
     public static SettingsFragment newInstance() {
         SettingsFragment fragment = new SettingsFragment();
@@ -72,12 +72,12 @@ public class SettingsFragment extends PreferenceFragment {
                 getPreferenceScreen().getSharedPreferences().
                         getString(getString(R.string.select_folder),
                                 Environment.getExternalStorageDirectory().getPath()));
-        startActivityForResult(i, FILE_CODE);
+        startActivityForResult(i, REQUEST_FILE_CODE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == FILE_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_FILE_CODE && resultCode == Activity.RESULT_OK) {
             getPreferenceScreen().getSharedPreferences().edit().putString(
                     getString(R.string.select_folder), data.getData().getPath()).apply();
             findPreference(getString(R.string.select_folder)).setSummary(data.getData().getPath());
