@@ -1,7 +1,10 @@
 package com.diacht.slideshow.ui;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -14,6 +17,7 @@ import android.widget.ImageView;
 import com.diacht.slideshow.R;
 import com.diacht.slideshow.system.BaseApplication;
 import com.diacht.slideshow.system.BaseSettings;
+import com.diacht.slideshow.system.BootUpReceiver;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -134,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         beginSlideShow();
+        ((BaseApplication)getApplication()).startAfterReboot();
     }
 
     private void beginSlideShow() {
@@ -179,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 getString(getString(R.string.update_interval), "5")));
     }
 
-    @Override
+     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Trigger the initial hide() shortly after the activity has been

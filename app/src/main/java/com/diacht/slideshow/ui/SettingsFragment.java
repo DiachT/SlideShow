@@ -68,5 +68,11 @@ public class SettingsFragment extends PreferenceFragment {
                     getSettings().setFolder(data.getData().getPath());
         }
     }
+
+    @Override
+    public void onPause() {
+        ((BaseApplication)getActivity().getApplication()).startAfterReboot();
+        super.onPause();
+    }
 }
 

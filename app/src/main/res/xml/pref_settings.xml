@@ -2,42 +2,15 @@
     <Preference android:title="@string/select_folder"
         android:key="@string/select_folder"/>
 
-    <!--<ListPreference-->
-        <!--android:title="List Preference"-->
-        <!--android:summary="This preference allows to select an item in a array"-->
-        <!--android:key="listPref"-->
-        <!--android:defaultValue="digiGreen"-->
-        <!--android:entries="@array/listArray"-->
-        <!--android:entryValues="@array/listValues"-->
-        <!--/>-->
-
     <ListPreference android:title="@string/update_interval"
-    android:key="@string/update_interval"
-    android:defaultValue="5"
-    android:entries="@array/interval"
-    android:entryValues="@array/interval"/>
+        android:key="@string/update_interval"
+        android:defaultValue="5"
+        android:entries="@array/interval"
+        android:entryValues="@array/interval"/>
 
-
-    <!--<SwitchPreference-->
-        <!--android:defaultValue="true"-->
-        <!--android:key="notifications_new_message"-->
-        <!--android:title="@string/pref_title_new_message_notifications" />-->
-
-    <!--&lt;!&ndash; Allows the user to choose a ringtone in the 'notification' category. &ndash;&gt;-->
-    <!--&lt;!&ndash; NOTE: This preference will be enabled only when the checkbox above is checked. &ndash;&gt;-->
-    <!--&lt;!&ndash; NOTE: RingtonePreference's summary should be set to its value by the activity code. &ndash;&gt;-->
-    <!--<RingtonePreference-->
-        <!--android:defaultValue="content://settings/system/notification_sound"-->
-        <!--android:dependency="notifications_new_message"-->
-        <!--android:key="notifications_new_message_ringtone"-->
-        <!--android:ringtoneType="notification"-->
-        <!--android:title="@string/pref_title_ringtone" />-->
-
-    <!--&lt;!&ndash; NOTE: This preference will be enabled only when the checkbox above is checked. &ndash;&gt;-->
-    <!--<SwitchPreference-->
-        <!--android:defaultValue="true"-->
-        <!--android:dependency="notifications_new_message"-->
-        <!--android:key="notifications_new_message_vibrate"-->
-        <!--android:title="@string/pref_title_vibrate" />-->
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/start_reboot"
+        android:title="@string/start_reboot" />
 
 </PreferenceScreen>
