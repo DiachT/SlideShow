@@ -1,9 +1,11 @@
 package com.diacht.slideshow.ui;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -138,8 +140,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         beginSlideShow();
-        ((BaseApplication)getApplication()).startAfterReboot();
+        ((BaseApplication)getApplication()).startSlideShowEvents();
+        registerReceiver(stopReceiver, new IntentFilter(Intent.ACTION_POWER_DISCONNECTED));
     }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(stopReceiver);
+        super.onPause();
+    }
+
+    private BroadcastReceiver stopReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (PreferenceManager.getDefaultSharedPreferences(MainActivity.this).
+                    getBoolean(getString(R.string.start_power), true)) {
+                finish();
+            }
+        }
+    };
 
     private void beginSlideShow() {
         if (mSettings.getFolder() != null) {
@@ -184,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 getString(getString(R.string.update_interval), "5")));
     }
 
-     @Override
+    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Trigger the initial hide() shortly after the activity has been

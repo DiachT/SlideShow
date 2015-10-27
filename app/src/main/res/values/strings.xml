@@ -7,4 +7,5 @@
     <string name="select_folder">Select Folder</string>
     <string name="update_interval">Update interval (seconds)</string>
     <string name="start_reboot">Is start SlideShow after reboot?</string>
+    <string name="start_power">Slide show while charging</string>
 </resources>

@@ -1,13 +1,13 @@
 package com.diacht.slideshow.system;
 
-        import android.content.BroadcastReceiver;
-        import android.content.Context;
-        import android.content.Intent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 
-        import com.diacht.slideshow.ui.MainActivity;
+import com.diacht.slideshow.ui.MainActivity;
 
 /**
- * BroadcastReceiver - start application after reboot
+ * BootUpReceiver - start application
  * @author Tetiana Diachuk (diacht@gmail.com)
  */
 public class BootUpReceiver extends BroadcastReceiver {

@@ -21,13 +21,23 @@ public class BaseApplication extends Application{
         mSettings = new BaseSettings(this);
     }
 
-    public void startAfterReboot() {
+    public void startSlideShowEvents() {
         boolean enabled = PreferenceManager.getDefaultSharedPreferences(this).
-                getBoolean(getString(R.string.start_reboot), true);
+                getBoolean(getString(R.string.start_power), true);
         int flag = (enabled ?
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
-        ComponentName component = new ComponentName(this, BootUpReceiver.class);
+        ComponentName component = new ComponentName(this, PowerReceiver.class);
+        getPackageManager()
+                .setComponentEnabledSetting(component, flag,
+                        PackageManager.DONT_KILL_APP);
+
+        enabled = PreferenceManager.getDefaultSharedPreferences(this).
+                getBoolean(getString(R.string.start_reboot), true);
+        flag = (enabled ?
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
+        component = new ComponentName(this, RebootReceiver.class);
         getPackageManager()
                 .setComponentEnabledSetting(component, flag,
                         PackageManager.DONT_KILL_APP);

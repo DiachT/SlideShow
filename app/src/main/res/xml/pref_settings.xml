@@ -10,6 +10,11 @@
 
     <SwitchPreference
         android:defaultValue="true"
+        android:key="@string/start_power"
+        android:title="@string/start_power" />
+
+    <SwitchPreference
+        android:defaultValue="true"
         android:key="@string/start_reboot"
         android:title="@string/start_reboot" />
 

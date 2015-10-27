@@ -71,7 +71,7 @@ public class SettingsFragment extends PreferenceFragment {
 
     @Override
     public void onPause() {
-        ((BaseApplication)getActivity().getApplication()).startAfterReboot();
+        ((BaseApplication)getActivity().getApplication()).startSlideShowEvents();
         super.onPause();
     }
 }
