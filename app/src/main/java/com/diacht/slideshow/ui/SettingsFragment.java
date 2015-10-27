@@ -1,20 +1,15 @@
 package com.diacht.slideshow.ui;
 
 import android.app.Activity;
-import android.content.ClipData;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
 import com.diacht.slideshow.R;
-import com.diacht.slideshow.system.BaseApplication;
+import com.diacht.slideshow.system.Utils;
 import com.nononsenseapps.filepicker.FilePickerActivity;
-
-import java.util.ArrayList;
 
 /**
  * SettingsFragment
@@ -40,9 +35,17 @@ public class SettingsFragment extends PreferenceFragment {
                         return true;
                     }
                 });
+
+        findPreference(getString(R.string.time_start)).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Utils.setTimeStart(getActivity(), (String) newValue);
+                return false;
+            }
+        });
     }
 
-    private void selectFolder() {
+        private void selectFolder() {
         Intent i = new Intent(getActivity(), FilePickerActivity.class);
         // This works if you defined the intent filter
         // Intent i = new Intent(Intent.ACTION_GET_CONTENT);
@@ -57,21 +60,20 @@ public class SettingsFragment extends PreferenceFragment {
         // dangerous. Always use Android's API calls to get paths to the SD-card or
         // internal memory.
         i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
-
         startActivityForResult(i, FILE_CODE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FILE_CODE && resultCode == Activity.RESULT_OK) {
-            ((BaseApplication)getActivity().getApplication()).
-                    getSettings().setFolder(data.getData().getPath());
+            getPreferenceScreen().getSharedPreferences().edit().putString(
+                    getString(R.string.select_folder), data.getData().getPath()).apply();
         }
     }
 
     @Override
     public void onPause() {
-        ((BaseApplication)getActivity().getApplication()).startSlideShowEvents();
+        Utils.startSlideShowEvents(getActivity());
         super.onPause();
     }
 }

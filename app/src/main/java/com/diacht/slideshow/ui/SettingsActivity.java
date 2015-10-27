@@ -1,6 +1,5 @@
 package com.diacht.slideshow.ui;
 
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;

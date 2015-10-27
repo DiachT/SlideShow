@@ -2,11 +2,9 @@ package com.diacht.slideshow.ui;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -17,9 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.diacht.slideshow.R;
-import com.diacht.slideshow.system.BaseApplication;
-import com.diacht.slideshow.system.BaseSettings;
-import com.diacht.slideshow.system.BootUpReceiver;
+import com.diacht.slideshow.system.Utils;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -59,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
-    private BaseSettings mSettings;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -114,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSettings = ((BaseApplication) getApplication()).getSettings();
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         mVisible = true;
@@ -140,19 +134,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         beginSlideShow();
-        ((BaseApplication)getApplication()).startSlideShowEvents();
-        registerReceiver(stopReceiver, new IntentFilter(Intent.ACTION_POWER_DISCONNECTED));
+        Utils.startSlideShowEvents(this);
+        IntentFilter filter = new IntentFilter(Intent.ACTION_POWER_DISCONNECTED);
+        filter.addAction(Utils.ACTION_STOP);
+        registerReceiver(stopReceiver, filter);
+        Utils.setTimeStop(this, PreferenceManager.getDefaultSharedPreferences(MainActivity.this).
+                getString(getString(R.string.time_stop), ""));
     }
 
     @Override
     protected void onPause() {
         unregisterReceiver(stopReceiver);
+        Utils.setTimeStart(this, PreferenceManager.getDefaultSharedPreferences(MainActivity.this).
+                getString(getString(R.string.time_start), ""));
         super.onPause();
     }
 
     private BroadcastReceiver stopReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(Utils.ACTION_STOP)){
+                finish();
+            }else
             if (PreferenceManager.getDefaultSharedPreferences(MainActivity.this).
                     getBoolean(getString(R.string.start_power), true)) {
                 finish();
@@ -161,8 +164,10 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void beginSlideShow() {
-        if (mSettings.getFolder() != null) {
-            File parentDir = new File(mSettings.getFolder());
+        if (PreferenceManager.getDefaultSharedPreferences(MainActivity.this).
+                getString(getString(R.string.select_folder), null) != null) {
+            File parentDir = new File(PreferenceManager.getDefaultSharedPreferences(MainActivity.this).
+                    getString(getString(R.string.select_folder), ""));
             if (parentDir.isDirectory()) {
                 FilenameFilter imageFilter = new FilenameFilter() {
                     public boolean accept(File file, String name) {
@@ -176,10 +181,23 @@ public class MainActivity extends AppCompatActivity {
                 };
                 File[] files = parentDir.listFiles(imageFilter);
                 if(files.length > 0) {
+                    mImageFirst.setVisibility(View.VISIBLE);
+                    mImageSecond.setVisibility(View.VISIBLE);
                     showImage(loadImageIntoView(mImageFirst, files, 0), files, true);
+                }else{
+                    goneImages();
                 }
+            }else {
+                goneImages();
             }
+        }else{
+            goneImages();
         }
+    }
+
+    private void goneImages(){
+        mImageFirst.setVisibility(View.GONE);
+        mImageSecond.setVisibility(View.GONE);
     }
 
     private int loadImageIntoView(ImageView view, File[] files, int i){
