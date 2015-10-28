@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     protected ImageView mImageFirst;
     @InjectView(R.id.image_second)
     protected ImageView mImageSecond;
+    private boolean isActivityActive;
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -132,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        isActivityActive = true;
         beginSlideShow();
         Utils.startSlideShowEvents(this);
         IntentFilter filter = new IntentFilter(Intent.ACTION_POWER_DISCONNECTED);
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(stopReceiver);
         Utils.setTimeStart(this, PreferenceManager.getDefaultSharedPreferences(MainActivity.this).
                 getString(getString(R.string.time_start), ""));
+        isActivityActive = false;
         super.onPause();
     }
 
@@ -202,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
         mImageFirst.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mImageFirst != null) {
+                if (mImageFirst != null && isActivityActive) {
                     mImageFirst.setVisibility(isFirstVisible ? View.INVISIBLE : View.VISIBLE);
                     showImage(nextPhotoId, files, !isFirstVisible);
                 }
